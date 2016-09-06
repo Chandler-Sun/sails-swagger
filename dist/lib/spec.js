@@ -38,6 +38,9 @@ var types = {
   datetime: {
     type: 'string',
     format: 'date-time'
+  },
+  collection: {
+    type: 'array'
   }
 };
 
@@ -47,8 +50,19 @@ var typeMap = {
 };
 
 var Spec = {
-  getPropertyType: function getPropertyType(wltype) {
-    return types[typeMap[wltype] || wltype];
+  getPropertyType: function getPropertyType(attrDescObj) {
+    var wltype = attrDescObj.type;
+    if (attrDescObj.collection) {
+      wltype = 'collection';
+    }
+    var ptype = types[typeMap[wltype] || wltype];
+    if (!ptype) {
+      ptype = {
+        type: 'string',
+        format: 'string'
+      };
+    }
+    return ptype;
   }
 };
 

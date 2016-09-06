@@ -105,8 +105,12 @@ var Transformer = {
      */
     getDefinitions: function getDefinitions(sails) {
         var definitions = _lodash2['default'].transform(sails.models, function (definitions, model, modelName) {
+            var requiredProps = [];
+            var props = Transformer.getDefinitionProperties(model, requiredProps);
             definitions[model.identity] = {
-                properties: Transformer.getDefinitionProperties(model.attributes)
+                type: "object",
+                properties: props,
+                required: requiredProps
             };
         });
 
@@ -115,12 +119,31 @@ var Transformer = {
         return definitions;
     },
 
-    getDefinitionProperties: function getDefinitionProperties(definition) {
+    getDefinitionProperties: function getDefinitionProperties(model, requiredProps) {
 
-        return _lodash2['default'].mapValues(definition, function (def, attrName) {
-            var property = _lodash2['default'].pick(def, ['type', 'description', 'format', 'model']);
+        return _lodash2['default'].mapValues(model.attributes, function (attrDescObj, attrName) {
 
-            return property.model && sails.config.blueprints.populate ? { '$ref': Transformer.generateDefinitionReference(property.model) } : _spec2['default'].getPropertyType(property.type);
+            var mappedDef = attrDescObj.model && sails.config.blueprints.populate ? { '$ref': Transformer.generateDefinitionReference(attrDescObj.model) } : _lodash2['default'].clone(_spec2['default'].getPropertyType(attrDescObj));
+
+            if (attrDescObj.collection && sails.config.blueprints.populate) {
+                mappedDef.items = { '$ref': Transformer.generateDefinitionReference(attrDescObj.collection) };
+            }
+            if (attrDescObj.description) {
+                mappedDef.description = attrDescObj.description;
+            }
+            if (attrDescObj['enum']) {
+                mappedDef['enum'] = attrDescObj['enum'];
+            }
+            if (attrDescObj.defaultsTo) {
+                mappedDef['default'] = attrDescObj.defaultsTo;
+            }
+            if (attrDescObj.required || attrDescObj.primaryKey) {
+                requiredProps.push(attrName);
+            }
+            if (attrDescObj.regex) {
+                mappedDef.pattern = attrDescObj.regex;
+            }
+            return mappedDef;
         });
     },
 
