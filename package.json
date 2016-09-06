@@ -5,8 +5,7 @@
   "main": "dist/api/hooks/swagger/index.js",
   "scripts": {
     "test": "gulp && mocha --reporter spec --compilers js:babel/register",
-    "prepublish": "gulp",
-    "postinstall": "gulp"
+    "prepublish": "gulp"
   },
   "repository": {
     "type": "git",
