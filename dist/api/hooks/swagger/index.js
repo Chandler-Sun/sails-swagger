@@ -48,7 +48,7 @@ var Swagger = (function (_Marlinspike) {
           }
         },
         'routes': {
-          '/swagger/doc': {
+          'get /swagger/doc': {
             controller: 'SwaggerController',
             action: 'doc'
           }

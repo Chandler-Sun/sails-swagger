@@ -18,7 +18,7 @@ class Swagger extends Marlinspike {
         }
       },
       'routes': {
-        '/swagger/doc': {
+        'get /swagger/doc': {
           controller: 'SwaggerController',
           action: 'doc'
         }
