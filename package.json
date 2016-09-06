@@ -6,7 +6,7 @@
   "scripts": {
     "test": "gulp && mocha --reporter spec --compilers js:babel/register",
     "prepublish": "gulp",
-    "preinstall": "gulp"
+    "postinstall": "gulp"
   },
   "repository": {
     "type": "git",
